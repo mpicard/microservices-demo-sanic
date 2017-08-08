@@ -1,7 +1,7 @@
+import aiohttp
+
 from sanic import Sanic
 from sanic import response
-
-import aiohttp
 
 
 app = Sanic()
@@ -14,11 +14,17 @@ async def fetch(session, url):
 
 @app.route("/")
 async def handle_request(request):
-    url = 'https://api.github.com/users/mpicard'
+    user_url = 'https://api.github.com/users/mpicard'
+    repo_url = 'https://api.github.com/users/mpicard/repos'
 
     async with aiohttp.ClientSession() as session:
-        resp = await fetch(session, url)
-        return response.json(resp)
+        user_resp = await fetch(session, user_url)
+        repo_resp = await fetch(session, repo_url)
+
+        return response.json({
+            'user': user_resp,
+            'repos': repo_resp
+        })
 
 
 if __name__ == "__main__":
